@@ -7,27 +7,35 @@ require('dotenv').config()
 
 const app = express();
 
+// connect to db 
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+})
+  .then(() => console.log('DB connected'))
+  .catch(err => console.log('DB CONNECTION ERROR:', err));
+
 // import routes 
 const authRoutes = require('./routes/auth')
 
 // app middlewares
 app.use(morgan('dev'));
-app.use(bodyParser().json());
-app.use(cors()); // allows all origins
+app.use(bodyParser.json());
+// app.use(cors()); // allows all origins
 
 // Ensure client is running on 3000 if you use below.
-// if (process.env.NODE_ENV = 'development') {
-//   app.use(cors({ origin: `http://localhost:3000` }));
-// }
-
-
+if (process.env.NODE_ENV = 'development') {
+  app.use(cors({ origin: `http://localhost:3000` }));
+}
 
 
 
 // middleware
 app.use('/api', authRoutes)
 
-const port = process.env.port || 8000;
+const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
   console.log(`API is running in port ${port}`);
